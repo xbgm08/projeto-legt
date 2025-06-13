@@ -1,29 +1,40 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import {
+  fetchEntries,
+  createEntry,
+} from '../services/entradaService';
 
 const Entrada = () => {
   const [entradas, setEntradas] = useState([]);
-  const [newEntrada, setNewEntrada] = useState({ produtoId: '', quantidade: '', data: '' });
+  const [newEntrada, setNewEntrada] = useState({ id_produto: '', quantidade: '', data_entrada: '' });
 
   useEffect(() => {
-    axios.get('http://localhost:8000/entradas')
-      .then(response => setEntradas(response.data))
-      .catch(error => console.error("Erro ao carregar entradas:", error));
+    carregarEntradas();
   }, []);
+
+  const carregarEntradas = async () => {
+    try {
+      const data = await fetchEntries();
+      setEntradas(data);
+    } catch (error) {
+      console.error("Erro ao carregar entradas:", error);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewEntrada({ ...newEntrada, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    axios.post('http://localhost:8000/entradas', newEntrada)
-      .then(response => {
-        setEntradas([...entradas, response.data]);
-        setNewEntrada({ produtoId: '', quantidade: '', data: '' });
-      })
-      .catch(error => console.error("Erro ao adicionar entrada:", error));
+    try {
+      const entradaCriada = await createEntry(newEntrada);
+      setEntradas([...entradas, entradaCriada]);
+      setNewEntrada({ id_produto: '', quantidade: '', data_entrada: '' });
+    } catch (error) {
+      console.error("Erro ao adicionar entrada:", error);
+    }
   };
 
   return (
@@ -32,9 +43,9 @@ const Entrada = () => {
       <form onSubmit={handleSubmit}>
         <input
           type="text"
-          name="produtoId"
+          name="id_produto"
           placeholder="ID do Produto"
-          value={newEntrada.produtoId}
+          value={newEntrada.id_produto}
           onChange={handleInputChange}
           required
         />
@@ -48,8 +59,8 @@ const Entrada = () => {
         />
         <input
           type="date"
-          name="data"
-          value={newEntrada.data}
+          name="data_entrada"
+          value={newEntrada.data_entrada}
           onChange={handleInputChange}
           required
         />
@@ -61,17 +72,19 @@ const Entrada = () => {
           <tr>
             <th>ID</th>
             <th>ID do Produto</th>
+            <th>ID do Insumo</th>
             <th>Quantidade</th>
             <th>Data</th>
           </tr>
         </thead>
         <tbody>
           {entradas.map(entrada => (
-            <tr key={entrada.id}>
-              <td>{entrada.id}</td>
-              <td>{entrada.produtoId}</td>
+            <tr key={entrada.id_entrada}>
+              <td>{entrada.id_entrada}</td>
+              <td>{entrada.id_insumo}</td>
+              <td>{entrada.id_produto}</td>
               <td>{entrada.quantidade}</td>
-              <td>{new Date(entrada.data).toLocaleDateString()}</td>
+              <td>{new Date(entrada.data_entrada).toLocaleDateString()}</td>
             </tr>
           ))}
         </tbody>

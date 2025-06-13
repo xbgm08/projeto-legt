@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Categoria from './components/Categoria';
 import Fornecedor from './components/Fornecedor';
 import FornecedorCategoria from './components/FornecedorCategoria';
@@ -14,8 +14,8 @@ import ItemPedido from './components/ItemPedido';
 
 const App = () => {
   return (
-    <Router>
-      <div>
+    <BrowserRouter>
+      <h1>Bem-vindo ao Sistema LEGT</h1>
         <Routes>
           <Route path="/categorias" element={<Categoria />} />
           <Route path="/fornecedor" element={<Fornecedor/>} />
@@ -28,12 +28,9 @@ const App = () => {
           <Route path="/visita-cliente" element={<VisitaCliente/>} />
           <Route path="/pedido" element={<Pedido/>} />
           <Route path="/item-pedido" element={<ItemPedido/>} />
-          <Route path="/" exact>
-            <h1>Bem-vindo ao Sistema LEGT</h1>
-          </Route>
+          <Route path="/" exact />
         </Routes>
-      </div>
-    </Router>
+    </BrowserRouter>
   );
 };
 

@@ -1,0 +1,78 @@
+from pydantic import BaseModel
+from typing import Optional
+
+class Categoria(BaseModel):
+    id_categoria: Optional[int] = None
+    nome: str
+    descricao: Optional[str] = None
+
+class Fornecedor(BaseModel):
+    id_fornecedor: Optional[int]
+    nome: str
+    porte: Optional[str]
+    contato: Optional[str]
+    cnpj: Optional[str]
+    canal_compra: str
+    observacao: Optional[str]
+
+class FornecedorCategoria(BaseModel):
+    id_fornecedor: int
+    id_categoria: int
+
+class Produto(BaseModel):
+    id_produto: Optional[int]
+    nome: str
+    descricao: Optional[str]
+    preco: float
+    quantidade_estoque: int
+    unidade_medida: str
+    id_categoria: int
+    status: bool
+
+class Insumo(BaseModel):
+    id_insumo: Optional[int]
+    nome: str
+    quantidade_estoque: float
+    unidade_medida: str
+    status: bool
+
+class Entrada(BaseModel):
+    id_entrada: Optional[int]
+    id_produto: Optional[int]
+    id_insumo: Optional[int]
+    id_fornecedor: int
+    quantidade: float
+    data_entrada: str
+    tipo_entrada: str
+
+class SaidaInsumo(BaseModel):
+    id_saida: Optional[int]
+    id_insumo: int
+    quantidade: float
+    data_saida: str
+    motivo: Optional[str]
+
+class ProdutoInsumo(BaseModel):
+    id_produto: int
+    id_insumo: int
+    quantidade_utilizada: float
+
+class VisitaCliente(BaseModel):
+    id_visita: Optional[int]
+    data_hora: str
+    quantidade_pessoas: int
+    observacao: Optional[str]
+
+class Pedido(BaseModel):
+    id_pedido: Optional[int]
+    data_hora: str
+    valor_total: float
+    forma_pagamento: str
+    id_visita: int
+
+class ItemPedido(BaseModel):
+    id_item: Optional[int]
+    id_pedido: int
+    id_produto: int
+    quantidade: int
+    preco_unitario: float

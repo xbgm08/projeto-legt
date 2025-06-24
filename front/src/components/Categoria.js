@@ -68,21 +68,27 @@ const Categoria = () => {
       <h2>Categorias</h2>
       <form onSubmit={handleSubmit}>
         <div className="categoria-form-row">
-          <input
-            type="text"
-            name="nome"
-            placeholder="Nome da categoria"
-            value={novaCategoria.nome}
-            onChange={handleInputChange}
-            required
-          />
-          <input
-            type="text"
-            name="descricao"
-            placeholder="Descrição (opcional)"
-            value={novaCategoria.descricao}
-            onChange={handleInputChange}
-          />
+          <label>
+            Nome
+            <input
+              type="text"
+              name="nome"
+              placeholder="Digite o nome da categoria"
+              value={novaCategoria.nome}
+              onChange={handleInputChange}
+              required
+            />
+          </label>
+          <label>
+            Descrição
+            <input
+              type="text"
+              name="descricao"
+              placeholder="Ex: Categoria para produtos alimentícios"
+              value={novaCategoria.descricao}
+              onChange={handleInputChange}
+            />
+          </label>
         </div>
         <button type="submit">{editando ? 'Atualizar' : 'Salvar'}</button>
         {editando && (

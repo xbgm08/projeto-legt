@@ -8,9 +8,7 @@ import Insumo from './components/Insumo';
 import Entrada from './components/Entrada';
 import SaidaInsumo from './components/SaidaInsumo';
 import ProdutoInsumo from './components/ProdutoInsumo';
-import VisitaCliente from './components/VisitaCliente';
 import Pedido from './components/Pedido';
-import ItemPedido from './components/ItemPedido';
 
 const App = () => {
   return (
@@ -25,9 +23,7 @@ const App = () => {
           <Route path="/entrada" element={<Entrada/>} />
           <Route path="/saida-insumo" element={<SaidaInsumo/>} />
           <Route path="/produto-insumo" element={<ProdutoInsumo/>} />
-          <Route path="/visita-cliente" element={<VisitaCliente/>} />
           <Route path="/pedido" element={<Pedido/>} />
-          <Route path="/item-pedido" element={<ItemPedido/>} />
           <Route path="/" exact />
         </Routes>
     </BrowserRouter>

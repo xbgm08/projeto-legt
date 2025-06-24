@@ -5,6 +5,11 @@ export const fetchPedidos = async () => {
   return response.data;
 };
 
+export const fetchPedidoById = async (id) => {
+  const response = await api.get(`/pedidos/${id}`);
+  return response.data;
+};
+
 export const createPedido = async (pedido) => {
   const response = await api.post('/pedidos', pedido);
   return response.data;

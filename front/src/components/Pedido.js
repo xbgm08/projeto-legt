@@ -7,10 +7,12 @@ import {
   fetchPedidoById
 } from '../services/pedidoService';
 import { fetchProdutos } from '../services/produtoService';
+import { FaEdit, FaTrash } from 'react-icons/fa';
+import '../styles/Pedido.css';
 
 const Pedido = () => {
   const [pedidos, setPedidos] = useState([]);
-  const [novoPedido, setNovoPedido] = useState({ data_hora: '', valor_total: '', forma_pagamento: '', quantidade_pessoas: '', observacao: '' });
+  const [novoPedido, setNovoPedido] = useState({ data_hora: '', forma_pagamento: '', quantidade_pessoas: '', observacao: '' });
   const [editando, setEditando] = useState(null);
   const [produtos, setProdutos] = useState([]);
   const [itensPedido, setItensPedido] = useState([]);
@@ -98,7 +100,7 @@ const Pedido = () => {
         await createPedido(pedidoPayload);
       }
 
-      setNovoPedido({ data_hora: '', valor_total: '', forma_pagamento: '', quantidade_pessoas: '', observacao: '' });
+      setNovoPedido({ data_hora: '', forma_pagamento: '', quantidade_pessoas: '', observacao: '' });
       setEditando(null);
       carregarPedidos();
       carregarProdutos();
@@ -143,121 +145,139 @@ const Pedido = () => {
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h2>Lista de Pedidos</h2>
-      <form onSubmit={handleSubmit} style={{ marginBottom: '20px' }}>
-        <input
-          type="datetime-local"
-          name="data_hora"
-          placeholder="Data e Hora"
-          value={novoPedido.data_hora}
-          onChange={handleInputChange}
-          required
-        />
-        <input
-          type="number"
-          name="valor_total"
-          placeholder="Valor Total"
-          value={novoPedido.valor_total}
-          readOnly
-        />
-        <input
-          type="text"
-          name="forma_pagamento"
-          placeholder="Forma de Pagamento"
-          value={novoPedido.forma_pagamento}
-          onChange={handleInputChange}
-          required
-        />
-        <input
-          type="number"
-          name="quantidade_pessoas"
-          placeholder="Quantidade de visitantes"
-          value={novoPedido.quantidade_pessoas}
-          onChange={handleInputChange}
-          required
-        />
-        <input
-          type="text"
-          name="observacao"
-          placeholder="Observação dos visitantes"
-          value={novoPedido.observacao}
-          onChange={handleInputChange}
-        />
-        <h4>Itens do Pedido</h4>
-        {itensPedido.map((item, idx) => (
-          <div key={idx} style={{ display: 'flex', gap: 8, marginBottom: 4 }}>
-            <select
-              value={item.id_produto}
-              onChange={e => handleItemChange(idx, 'id_produto', e.target.value)}
-              required
-            >
-              <option value="">Selecione o produto</option>
-              {produtos.map(prod => (
-                <option key={prod.id_produto} value={prod.id_produto}>
-                  {prod.nome}
-                </option>
-              ))}
-            </select>
-            <input
-              type="number"
-              min="1"
-              value={item.quantidade}
-              onChange={e => handleItemChange(idx, 'quantidade', e.target.value)}
-              placeholder="Quantidade"
-              required
-            />
-            <input
-              type="number"
-              value={item.preco_unitario}
-              readOnly
-              placeholder="Preço Unitário"
-            />
-            <button type="button" onClick={() => handleRemoveItem(idx)}>Remover</button>
+    <div className="pedido">
+      <h2>Pedidos</h2>
+      <div className="pedido-form-container">
+        <form onSubmit={handleSubmit}>
+          <div className="pedido-form-row">
+            <label>
+              Data e Hora do Pedido:
+              <input
+                type="datetime-local"
+                name="data_hora"
+                value={novoPedido.data_hora}
+                onChange={handleInputChange}
+                required
+              />
+            </label>
+            <label>
+              Forma de Pagamento:
+              <input
+                type="text"
+                name="forma_pagamento"
+                placeholder="Ex: Pix, Cartão..."
+                value={novoPedido.forma_pagamento}
+                onChange={handleInputChange}
+                required
+              />
+            </label>
+            <label>
+              Quantidade de Visitantes:
+              <input
+                type="number"
+                name="quantidade_pessoas"
+                placeholder="Informe o número de pessoas"
+                value={novoPedido.quantidade_pessoas}
+                onChange={handleInputChange}
+                required
+              />
+            </label>
           </div>
-        ))}
-        <button type="button" onClick={handleAddItem}>Adicionar Item</button>
-        <button type="submit">{editando ? 'Atualizar' : 'Adicionar'}</button>
-        {editando && (
-          <button
-            type="button"
-            onClick={() => {
-              setEditando(null);
-              setNovoPedido({ data_hora: '', valor_total: '', forma_pagamento: '', quantidade_pessoas: '', observacao: '' });
-              setItensPedido([]);
-            }}
-          >
-            Cancelar
-          </button>
-        )}
-      </form>
-      <table border="1" cellPadding="8" cellSpacing="0" style={{ marginTop: '20px', width: '100%' }}>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Data/Hora</th>
-            <th>Valor Total</th>
-            <th>Forma de Pagamento</th>
-            <th>Quantidade de visitantes</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {pedidos.map(pedido => (
-            <tr key={pedido.id_pedido}>
-              <td>{pedido.id_pedido}</td>
-              <td>{new Date(pedido.data_hora).toLocaleString()}</td>
-              <td>R$ {Number(pedido.valor_total).toFixed(2)}</td>
-              <td>{pedido.forma_pagamento}</td>
-              <td>{Number(pedido.quantidade_pessoas)}</td>
-              <td>
-                <button onClick={() => handleEditar(pedido)}>Editar</button>
-                <button onClick={() => handleExcluir(pedido.id_pedido)}>Excluir</button>
-              </td>
-            </tr>
+          <div className="pedido-form-row">
+            <label style={{ flex: 2 }}>
+              Observação dos Visitantes (opcional):
+              <input
+                type="text"
+                name="observacao"
+                placeholder="Alguma observação importante?"
+                value={novoPedido.observacao}
+                onChange={handleInputChange}
+              />
+            </label>
+          </div>
+          <h4>Itens do Pedido</h4>
+          {itensPedido.map((item, idx) => (
+            <div key={idx} className="itens-pedido-row">
+              <select
+                value={item.id_produto}
+                onChange={e => handleItemChange(idx, 'id_produto', e.target.value)}
+                required
+              >
+                <option value="">Produto</option>
+                {produtos.map(prod => (
+                  <option key={prod.id_produto} value={prod.id_produto}>
+                    {prod.nome}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="number"
+                min="1"
+                value={item.quantidade}
+                onChange={e => handleItemChange(idx, 'quantidade', e.target.value)}
+                placeholder="Qtd"
+                required
+              />
+              <input
+                type="number"
+                value={item.preco_unitario}
+                readOnly
+                placeholder="Preço"
+              />
+              <button type="button" className="excluir" onClick={() => handleRemoveItem(idx)}>Remover</button>
+            </div>
           ))}
-        </tbody>
-      </table>
+          <button type="button" onClick={handleAddItem}>Adicionar Item</button><br /><br />
+          <p>Total do Pedido: R$ {calcularValorTotal().toFixed(2)}</p>
+          <button type="submit">{editando ? 'Atualizar' : 'Salvar'}</button>
+          {editando && (
+            <button
+              type="button"
+              className="cancelar"
+              onClick={() => {
+                setEditando(null);
+                setNovoPedido({ data_hora: '', forma_pagamento: '', quantidade_pessoas: '', observacao: '' });
+                setItensPedido([]);
+              }}
+            >
+              Cancelar
+            </button>
+          )}
+        </form>
+      </div>
+      <div className="pedido-lista-container">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Data/Hora</th>
+              <th>Valor Total</th>
+              <th>Forma de Pagamento</th>
+              <th>Quantidade de visitantes</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {pedidos.map(pedido => (
+              <tr key={pedido.id_pedido}>
+                <td>{pedido.id_pedido}</td>
+                <td>{new Date(pedido.data_hora).toLocaleString()}</td>
+                <td>R$ {Number(pedido.valor_total).toFixed(2)}</td>
+                <td>{pedido.forma_pagamento}</td>
+                <td>{Number(pedido.quantidade_pessoas)}</td>
+                <td>
+                  <button className="btn-acao editar" onClick={() => handleEditar(pedido)} title="Editar">
+                    <FaEdit />
+                  </button>
+                  <button className="btn-acao excluir" onClick={() => handleExcluir(pedido.id_pedido)} title="Excluir">
+                    <FaTrash />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

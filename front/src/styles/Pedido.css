@@ -1,0 +1,244 @@
+.pedido {
+  max-width: 900px;
+  margin: 32px auto;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  padding: 32px 24px;
+}
+
+.pedido h2 {
+  font-size: 2em;
+  color: #2d3436;
+  margin-bottom: 24px;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+/* Formulário */
+.pedido-form-container {
+  z-index: 2;
+  background: #fff;
+  padding-bottom: 16px;
+}
+
+.pedido form {
+  background: #f7fafd;
+  border-radius: 10px;
+  padding: 24px;
+  margin-bottom: 32px;
+  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.07);
+}
+
+.pedido-form-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.pedido-form-row label {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  font-weight: 500;
+  color: #2d3436;
+  font-size: 1em;
+}
+
+.pedido form input,
+.pedido form select {
+  margin: 8px 0;
+  padding: 10px 12px;
+  border: 1px solid #dfe6e9;
+  border-radius: 6px;
+  font-size: 1em;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border 0.2s;
+}
+
+.pedido form input:focus,
+.pedido form select:focus {
+  border: 1.5px solid #3498db;
+  outline: none;
+}
+
+.pedido form h4 {
+  margin-top: 18px;
+  color: #636e72;
+  font-weight: 600;
+}
+
+/* Itens do pedido */
+.pedido .itens-pedido-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  align-items: center;
+}
+
+.pedido .itens-pedido-row select,
+.pedido .itens-pedido-row input {
+  flex: 1;
+  min-width: 0;
+}
+
+.pedido .itens-pedido-row button {
+  background: #e17055;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.pedido .itens-pedido-row button:hover {
+  background: #d35400;
+}
+
+/* Botões do formulário */
+.pedido form button[type="button"] {
+  background: #00b894;
+  color: #fff;
+  margin-right: 8px;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 18px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.pedido form button[type="button"]:hover {
+  background: #019875;
+}
+
+.pedido form button[type="submit"] {
+  background: #0984e3;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 18px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-right: 8px;
+  transition: background 0.2s;
+}
+
+.pedido form button[type="submit"]:hover {
+  background: #0652dd;
+}
+
+.pedido form button[type="button"]:last-child {
+  background: #636e72;
+}
+
+.pedido form button[type="button"]:last-child:hover {
+  background: #2d3436;
+}
+
+/* Botões especiais */
+.pedido form button[type="button"].excluir,
+.pedido form button[type="button"].cancelar {
+  background: #e17055;
+  color: #fff;
+}
+.pedido form button[type="button"].excluir:hover,
+.pedido form button[type="button"].cancelar:hover {
+  background: #d63031;
+}
+
+/* Tabela de pedidos */
+.pedido-lista-container {
+  max-height: 60vh;
+  min-height: 200px;
+  overflow-y: auto;
+  margin-top: 12px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.07);
+  background: #f7fafd;
+  overflow-x: auto;
+}
+
+.pedido-lista-container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.pedido-lista-container thead th {
+  position: sticky;
+  top: 0;
+  background: #3498db;
+  color: #fff;
+  z-index: 1;
+}
+
+.pedido th, .pedido td {
+  padding: 14px 10px;
+  text-align: center;
+}
+
+.pedido th {
+  background: #3498db;
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.pedido td {
+  color: #2d3436;
+  background: #f7fafd;
+}
+
+/* Botões de ação na tabela */
+.btn-acao {
+  background: #0984e3;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  margin: 0 2px;
+  cursor: pointer;
+  font-size: 1.1em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.btn-acao.editar {
+  background: #0984e3;
+}
+.btn-acao.editar:hover {
+  background: #0652dd;
+}
+
+.btn-acao.excluir {
+  background: #e17055;
+}
+.btn-acao.excluir:hover {
+  background: #d63031;
+}
+
+/* Responsividade */
+@media (max-width: 700px) {
+  .pedido {
+    padding: 12px 2vw;
+  }
+  .pedido form {
+    padding: 12px 2vw;
+  }
+  .pedido table, .pedido th, .pedido td {
+    font-size: 0.95em;
+    padding: 8px 4px;
+  }
+  .pedido .itens-pedido-row {
+    flex-direction: column;
+    gap: 4px;
+  }
+  .pedido-form-row {
+    flex-direction: column;
+    gap: 4px;
+  }
+}

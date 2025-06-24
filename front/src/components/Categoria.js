@@ -5,6 +5,8 @@ import {
   updateCategoria,
   deleteCategoria,
 } from '../services/categoriaService';
+import { FaEdit, FaTrash } from 'react-icons/fa';
+import '../styles/Categoria.css';
 
 const Categoria = () => {
   const [categorias, setCategorias] = useState([]);
@@ -62,54 +64,62 @@ const Categoria = () => {
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h2>Lista de Categorias</h2>
-      <form onSubmit={handleSubmit} style={{ marginBottom: '20px' }}>
-        <input
-          type="text"
-          name="nome"
-          placeholder="Nome"
-          value={novaCategoria.nome}
-          onChange={handleInputChange}
-          required
-        />
-        <input
-          type="text"
-          name="descricao"
-          placeholder="Descrição"
-          value={novaCategoria.descricao}
-          onChange={handleInputChange}
-        />
-        <button type="submit">{editando ? 'Atualizar' : 'Adicionar'}</button>
+    <div className="categoria">
+      <h2>Categorias</h2>
+      <form onSubmit={handleSubmit}>
+        <div className="categoria-form-row">
+          <input
+            type="text"
+            name="nome"
+            placeholder="Nome da categoria"
+            value={novaCategoria.nome}
+            onChange={handleInputChange}
+            required
+          />
+          <input
+            type="text"
+            name="descricao"
+            placeholder="Descrição (opcional)"
+            value={novaCategoria.descricao}
+            onChange={handleInputChange}
+          />
+        </div>
+        <button type="submit">{editando ? 'Atualizar' : 'Salvar'}</button>
         {editando && (
           <button type="button" onClick={() => { setEditando(null); setNovaCategoria({ nome: '', descricao: '' }); }}>
             Cancelar
           </button>
         )}
       </form>
-      <table border="1" cellPadding="8" cellSpacing="0" style={{ marginTop: '20px', width: '100%' }}>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nome</th>
-            <th>Descrição</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {(categorias || []).map(categoria => (
-            <tr key={categoria.id_categoria}>
-              <td>{categoria.id_categoria}</td>
-              <td>{categoria.nome}</td>
-              <td>{categoria.descricao}</td>
-              <td>
-                <button onClick={() => handleEditar(categoria)}>Editar</button>
-                <button onClick={() => handleExcluir(categoria.id_categoria)}>Excluir</button>
-              </td>
+      <div className="categoria-lista-container">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nome</th>
+              <th>Descrição</th>
+              <th>Ações</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {(categorias || []).map(categoria => (
+              <tr key={categoria.id_categoria}>
+                <td>{categoria.id_categoria}</td>
+                <td>{categoria.nome}</td>
+                <td>{categoria.descricao}</td>
+                <td>
+                  <button className="btn-acao editar" onClick={() => handleEditar(categoria)} title="Editar">
+                    <FaEdit />
+                  </button>
+                  <button className="btn-acao excluir" onClick={() => handleExcluir(categoria.id_categoria)} title="Excluir">
+                    <FaTrash />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

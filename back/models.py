@@ -7,7 +7,7 @@ class Categoria(BaseModel):
     descricao: Optional[str] = None
 
 class Fornecedor(BaseModel):
-    id_fornecedor: Optional[int]
+    id_fornecedor: Optional[int] = None
     nome: str
     porte: Optional[str]
     contato: Optional[str]
@@ -20,7 +20,7 @@ class FornecedorCategoria(BaseModel):
     id_categoria: int
 
 class Produto(BaseModel):
-    id_produto: Optional[int]
+    id_produto: Optional[int] = None
     nome: str
     descricao: Optional[str]
     preco: float
@@ -30,23 +30,23 @@ class Produto(BaseModel):
     status: bool
 
 class Insumo(BaseModel):
-    id_insumo: Optional[int]
+    id_insumo: Optional[int] = None
     nome: str
     quantidade_estoque: float
     unidade_medida: str
     status: bool
 
 class Entrada(BaseModel):
-    id_entrada: Optional[int]
-    id_produto: Optional[int]
-    id_insumo: Optional[int]
+    id_entrada: Optional[int] = None
+    id_produto: Optional[int] = None
+    id_insumo: Optional[int] = None
     id_fornecedor: int
     quantidade: float
     data_entrada: str
     tipo_entrada: str
 
 class SaidaInsumo(BaseModel):
-    id_saida: Optional[int]
+    id_saida: Optional[int] = None
     id_insumo: int
     quantidade: float
     data_saida: str
@@ -58,21 +58,26 @@ class ProdutoInsumo(BaseModel):
     quantidade_utilizada: float
 
 class VisitaCliente(BaseModel):
-    id_visita: Optional[int]
+    id_visita: Optional[int] = None
     data_hora: str
     quantidade_pessoas: int
     observacao: Optional[str]
 
 class Pedido(BaseModel):
-    id_pedido: Optional[int]
+    id_pedido: Optional[int] = None
     data_hora: str
     valor_total: float
     forma_pagamento: str
-    id_visita: int
+    id_visita: Optional[int] = None
+
+class PedidoSuper(Pedido):
+    quantidade_pessoas: int
+    observacao: Optional[str] = None
+    items: list['ItemPedido'] = []
 
 class ItemPedido(BaseModel):
-    id_item: Optional[int]
-    id_pedido: int
+    id_item: Optional[int] = None
+    id_pedido: Optional[int] = None
     id_produto: int
     quantidade: int
     preco_unitario: float

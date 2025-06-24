@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 from db import get_conn
 from models import *
+from datetime import datetime
 
 app = FastAPI()
 
@@ -14,7 +15,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Categoria
 # Categoria
 @app.get("/categorias", response_model=List[Categoria])
 def listar_categorias():
@@ -301,22 +301,6 @@ def criar_produto_insumo(pi: ProdutoInsumo):
     return pi
 
 # Visita Cliente
-@app.get("/visitas_cliente", response_model=List[VisitaCliente])
-def listar_visitas_cliente():
-    con = get_conn()
-    try:
-        with con:
-            with con.cursor() as cur:
-                cur.execute("SELECT id_visita, data_hora, quantidade_pessoas, observacao FROM visita_cliente")
-                rows = cur.fetchall()
-                return [
-                    VisitaCliente(
-                        id_visita=r[0], data_hora=str(r[1]), quantidade_pessoas=r[2], observacao=r[3]
-                    ) for r in rows
-                ]
-    finally:
-        con.close()
-
 @app.post("/visitas_cliente", response_model=VisitaCliente)
 def criar_visita_cliente(v: VisitaCliente):
     con = get_conn()
@@ -334,28 +318,89 @@ def criar_visita_cliente(v: VisitaCliente):
         con.close()
     return v
 
+@app.put("/visitas_cliente/{id}", response_model=VisitaCliente)
+def update_visita_cliente(id: int, v: VisitaCliente):
+    con = get_conn()
+    try:
+        with con:
+            with con.cursor() as cur:
+                cur.execute(
+                    "UPDATE visita_cliente SET data_hora = %s, quantidade_pessoas = %s, observacao = %s WHERE id_visita = %s RETURNING id_visita",
+                    (v.data_hora, v.quantidade_pessoas, v.observacao, id)
+                )
+                if cur.rowcount == 0:
+                    raise HTTPException(status_code=404, detail="Visita não encontrada")
+                v.id_visita = id
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        con.close()
+    return v
+
 # Pedido
-@app.get("/pedidos", response_model=List[Pedido])
+@app.get("/pedidos", response_model=List[PedidoSuper])
 def listar_pedidos():
     con = get_conn()
     try:
         with con:
             with con.cursor() as cur:
-                cur.execute("SELECT id_pedido, data_hora, valor_total, forma_pagamento, id_visita FROM pedido")
+                cur.execute("" \
+                    "SELECT p.id_pedido, p.data_hora, p.valor_total, p.forma_pagamento, vc.quantidade_pessoas " \
+                    "FROM pedido p " \
+                    "LEFT JOIN visita_cliente vc ON p.id_visita = vc.id_visita" \
+                )
                 rows = cur.fetchall()
                 return [
-                    Pedido(
+                   PedidoSuper(
                         id_pedido=r[0], data_hora=str(r[1]), valor_total=float(r[2]),
-                        forma_pagamento=r[3], id_visita=r[4]
+                        forma_pagamento=r[3], quantidade_pessoas=r[4]
                     ) for r in rows
                 ]
     finally:
         con.close()
 
-@app.post("/pedidos", response_model=Pedido)
-def criar_pedido(p: Pedido):
+@app.get("/pedidos/{id}", response_model=PedidoSuper)
+def get_pedido_by_id(id: int):
     con = get_conn()
     try:
+        with con:
+            with con.cursor() as cur:
+                cur.execute(
+                    "SELECT p.id_pedido, p.data_hora, p.valor_total, p.forma_pagamento, vc.quantidade_pessoas, vc.observacao " \
+                    "FROM pedido p " \
+                    "LEFT JOIN visita_cliente vc ON p.id_visita = vc.id_visita " \
+                    "WHERE id_pedido = %s",
+                    (id,)
+                )
+                row = cur.fetchone()
+
+                itens = listar_itens_pedido(id)
+                if row:
+                    return PedidoSuper(
+                        id_pedido=row[0], data_hora=str(row[1]), valor_total=float(row[2]),
+                        forma_pagamento=row[3], quantidade_pessoas=row[4], observacao=row[5],
+                        items=itens
+                    )
+                else:
+                    raise HTTPException(status_code=404, detail="Pedido não encontrado")
+    finally:
+        con.close()
+
+@app.post("/pedidos", response_model=PedidoSuper)
+def criar_pedido(p: PedidoSuper):
+    con = get_conn()
+
+    print(f"Creating pedido: {p}")
+    try:
+        visita = VisitaCliente(
+            data_hora=p.data_hora,
+            quantidade_pessoas=p.quantidade_pessoas,
+            observacao=p.observacao
+        )
+
+        visita_obj = criar_visita_cliente(visita)
+        p.id_visita = visita_obj.id_visita
+
         with con:
             with con.cursor() as cur:
                 cur.execute(
@@ -363,20 +408,75 @@ def criar_pedido(p: Pedido):
                     (p.data_hora, p.valor_total, p.forma_pagamento, p.id_visita)
                 )
                 p.id_pedido = cur.fetchone()[0]
+
+                for item in p.items:
+                    cur.execute(
+                        "INSERT INTO item_pedido (id_pedido, id_produto, quantidade, preco_unitario) VALUES (%s, %s, %s, %s)",
+                        (p.id_pedido, item.id_produto, item.quantidade, item.preco_unitario)
+                    )
     except Exception as ex:
         raise HTTPException(status_code=500, detail=str(ex))
     finally:
         con.close()
     return p
 
-# Item Pedido
-@app.get("/itens_pedido", response_model=List[ItemPedido])
-def listar_itens_pedido():
+@app.put("/pedidos/{id}", response_model=PedidoSuper)
+def update_pedido(id: int, p: PedidoSuper):
     con = get_conn()
     try:
         with con:
             with con.cursor() as cur:
-                cur.execute("SELECT id_item, id_pedido, id_produto, quantidade, preco_unitario FROM item_pedido")
+                cur.execute(
+                    "UPDATE pedido SET data_hora = %s, valor_total = %s, forma_pagamento = %s WHERE id_pedido = %s RETURNING id_pedido, id_visita",
+                    (p.data_hora, p.valor_total, p.forma_pagamento, id)
+                )
+                if cur.rowcount == 0:
+                    raise HTTPException(status_code=404, detail="Pedido não encontrado")
+                
+                cur.execute(
+                    "DELETE FROM item_pedido WHERE id_pedido = %s",
+                    (id,)
+                )
+
+                p.id_pedido = id
+
+                visita = VisitaCliente(
+                    data_hora=p.data_hora,
+                    quantidade_pessoas=p.quantidade_pessoas,
+                    observacao=p.observacao,
+                    id_visita=p.id_visita
+                )
+                update_visita_cliente(p.id_visita, visita)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        con.close()
+    return p
+
+@app.delete("/pedidos/{id}")
+def delete_pedido(id: int):
+    con = get_conn()
+    try:
+        with con:
+            with con.cursor() as cur:
+                cur.execute("DELETE FROM pedido WHERE id_pedido = %s", (id,))
+                if cur.rowcount == 0:
+                    raise HTTPException(status_code=404, detail="Pedido não encontrado")
+    finally:
+        con.close()
+    return {"detail": "Pedido excluído com sucesso"}
+
+# Item Pedido
+@app.get("/itens_pedido", response_model=List[ItemPedido])
+def listar_itens_pedido(id_pedido: int):
+    con = get_conn()
+    try:
+        with con:
+            with con.cursor() as cur:
+                cur.execute(
+                    "SELECT id_item, id_pedido, id_produto, quantidade, preco_unitario FROM item_pedido " \
+                    "WHERE id_pedido = %s", (id_pedido,)
+                )
                 rows = cur.fetchall()
                 return [
                     ItemPedido(
@@ -385,20 +485,3 @@ def listar_itens_pedido():
                 ]
     finally:
         con.close()
-
-@app.post("/itens_pedido", response_model=ItemPedido)
-def criar_item_pedido(i: ItemPedido):
-    con = get_conn()
-    try:
-        with con:
-            with con.cursor() as cur:
-                cur.execute(
-                    "INSERT INTO item_pedido (id_pedido, id_produto, quantidade, preco_unitario) VALUES (%s, %s, %s, %s) RETURNING id_item",
-                    (i.id_pedido, i.id_produto, i.quantidade, i.preco_unitario)
-                )
-                i.id_item = cur.fetchone()[0]
-    except Exception as ex:
-        raise HTTPException(status_code=500, detail=str(ex))
-    finally:
-        con.close()
-    return i

@@ -1,5 +1,6 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { FaList, FaTruck, FaBoxOpen, FaCubes, FaArrowDown, FaArrowUp, FaLink, FaClipboardList } from 'react-icons/fa';
 import Categoria from './components/Categoria';
 import Fornecedor from './components/Fornecedor';
 import FornecedorCategoria from './components/FornecedorCategoria';
@@ -9,19 +10,36 @@ import Entrada from './components/Entrada';
 import SaidaInsumo from './components/SaidaInsumo';
 import ProdutoInsumo from './components/ProdutoInsumo';
 import Pedido from './components/Pedido';
+import './styles/Menu.css';
 
-const Menu = () => (
-  <nav style={{ marginBottom: '20px' }}>
-    <Link to="/categorias" style={{ marginRight: 10 }}>Categorias</Link>
-    <Link to="/fornecedor" style={{ marginRight: 10 }}>Fornecedor</Link>
-    <Link to="/produto" style={{ marginRight: 10 }}>Produto</Link>
-    <Link to="/insumo" style={{ marginRight: 10 }}>Insumo</Link>
-    <Link to="/entrada" style={{ marginRight: 10 }}>Entrada</Link>
-    <Link to="/saida-insumo" style={{ marginRight: 10 }}>Saída Insumo</Link>
-    <Link to="/produto-insumo" style={{ marginRight: 10 }}>Produto Insumo</Link>
-    <Link to="/pedido" style={{ marginRight: 10 }}>Pedido</Link>
-  </nav>
-);
+const menuItems = [
+  { to: "/categorias", label: "Categorias", icon: <FaList /> },
+  { to: "/fornecedor", label: "Fornecedor", icon: <FaTruck /> },
+  { to: "/produto", label: "Produto", icon: <FaBoxOpen /> },
+  { to: "/insumo", label: "Insumo", icon: <FaCubes /> },
+  { to: "/entrada", label: "Entrada", icon: <FaArrowDown /> },
+  { to: "/saida-insumo", label: "Saída Insumo", icon: <FaArrowUp /> },
+  { to: "/produto-insumo", label: "Produto Insumo", icon: <FaLink /> },
+  { to: "/pedido", label: "Pedido", icon: <FaClipboardList /> },
+];
+
+const Menu = () => {
+  const location = useLocation();
+  return (
+    <nav className="menu-nav">
+      {menuItems.map(item => (
+        <Link
+          key={item.to}
+          to={item.to}
+          className={`menu-link${location.pathname === item.to ? ' active' : ''}`}
+        >
+          <span className="menu-icon">{item.icon}</span>
+          <span>{item.label}</span>
+        </Link>
+      ))}
+    </nav>
+  );
+};
 
 const App = () => {
   return (

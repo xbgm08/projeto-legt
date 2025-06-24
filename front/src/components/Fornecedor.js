@@ -6,6 +6,7 @@ import {
   deleteFornecedor,
 } from '../services/fornecedorService';
 import { FaEdit, FaTrash } from 'react-icons/fa';
+import InputMask from 'react-input-mask';
 import '../styles/Fornecedor.css';
 
 const Fornecedor = () => {
@@ -76,53 +77,79 @@ const Fornecedor = () => {
       <h2>Fornecedores</h2>
       <form onSubmit={handleSubmit}>
         <div className="fornecedor-form-row">
-          <input
-            type="text"
-            name="nome"
-            placeholder="Nome"
-            value={novoFornecedor.nome}
-            onChange={handleInputChange}
-            required
-          />
-          <input
-            type="text"
-            name="contato"
-            placeholder="Contato"
-            value={novoFornecedor.contato}
-            onChange={handleInputChange}
-          />
+          <label>
+            Nome
+            <input
+              type="text"
+              name="nome"
+              placeholder="Digite o nome do fornecedor"
+              value={novoFornecedor.nome}
+              onChange={handleInputChange}
+              required
+            />
+          </label>
+          <label>
+            Contato
+            <input
+              type="text"
+              name="contato"
+              placeholder="Telefone, e-mail ou responsável"
+              value={novoFornecedor.contato}
+              onChange={handleInputChange}
+            />
+          </label>
         </div>
         <div className="fornecedor-form-row">
-          <input
-            type="text"
-            name="porte"
-            placeholder="Porte"
-            value={novoFornecedor.porte}
-            onChange={handleInputChange}
-          />
-          <input
-            type="text"
-            name="cnpj"
-            placeholder="CNPJ"
-            value={novoFornecedor.cnpj}
-            onChange={handleInputChange}
-          />
+          <label>
+            Porte
+            <input
+              type="text"
+              name="porte"
+              placeholder="Ex: Pequeno, Médio, Grande"
+              value={novoFornecedor.porte}
+              onChange={handleInputChange}
+            />
+          </label>
+          <label>
+            CNPJ
+            <InputMask
+              mask="99.999.999/9999-99"
+              value={novoFornecedor.cnpj}
+              onChange={handleInputChange}
+            >
+              {(inputProps) => (
+                <input
+                  {...inputProps}
+                  type="text"
+                  name="cnpj"
+                  placeholder="00.000.000/0000-00"
+                  required
+                />
+              )}
+            </InputMask>
+          </label>
         </div>
         <div className="fornecedor-form-row">
-          <input
-            type="text"
-            name="canal_compra"
-            placeholder="Canal de Compra"
-            value={novoFornecedor.canal_compra}
-            onChange={handleInputChange}
-          />
-          <input
-            type="text"
-            name="observacao"
-            placeholder="Observação"
-            value={novoFornecedor.observacao}
-            onChange={handleInputChange}
-          />
+          <label>
+            Canal de Compra
+            <input
+              type="text"
+              name="canal_compra"
+              placeholder="Ex: WhatsApp, site, telefone"
+              value={novoFornecedor.canal_compra}
+              onChange={handleInputChange}
+            />
+          </label>
+          <label>
+            Observação (opcional)
+            <input
+              type="text"
+              name="observacao"
+              placeholder="Informações adicionais"
+              value={novoFornecedor.observacao}
+              onChange={handleInputChange}
+            />
+          </label>
         </div>
         <button type="submit">{editando ? 'Atualizar' : 'Salvar'}</button>
         {editando && (

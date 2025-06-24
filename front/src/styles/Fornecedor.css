@@ -21,6 +21,15 @@
   margin-bottom: 12px;
 }
 
+.fornecedor-form-row label {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  font-weight: 500;
+  color: #2d3436;
+  font-size: 1em;
+}
+
 .fornecedor-form-row input {
   flex: 1;
   margin: 8px 0;

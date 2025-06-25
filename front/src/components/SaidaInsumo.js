@@ -5,14 +5,19 @@ import {
   updateSaidaInsumo,
   deleteSaidaInsumo,
 } from '../services/saidaInsumoService';
+import { fetchInsumos } from '../services/insumoService';
+import { FaEdit, FaTrash } from 'react-icons/fa';
+import '../styles/SaidaInsumo.css';
 
 const SaidaInsumo = () => {
   const [saidas, setSaidas] = useState([]);
   const [novo, setNovo] = useState({ id_insumo: '', quantidade: '', data_saida: '', motivo: '' });
   const [editando, setEditando] = useState(null);
+  const [insumos, setInsumos] = useState([]);
 
   useEffect(() => {
     carregarSaidas();
+    carregarInsumos();
   }, []);
 
   const carregarSaidas = async () => {
@@ -21,6 +26,15 @@ const SaidaInsumo = () => {
       setSaidas(data);
     } catch (error) {
       console.error("Erro ao carregar saídas de insumos:", error);
+    }
+  };
+
+  const carregarInsumos = async () => {
+    try {
+      const data = await fetchInsumos();
+      setInsumos(data);
+    } catch (error) {
+      console.error("Erro ao carregar insumos:", error);
     }
   };
 
@@ -48,7 +62,7 @@ const SaidaInsumo = () => {
     setNovo({
       id_insumo: saida.id_insumo,
       quantidade: saida.quantidade,
-      data_saida: saida.data_saida,
+      data_saida: saida.data_saida ? saida.data_saida.slice(0, 10) : '',
       motivo: saida.motivo,
     });
     setEditando(saida.id_saida);
@@ -66,73 +80,117 @@ const SaidaInsumo = () => {
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h2>Lista de Saídas de Insumos</h2>
-      <form onSubmit={handleSubmit} style={{ marginBottom: '20px' }}>
-        <input
-          type="number"
-          name="id_insumo"
-          placeholder="ID do Insumo"
-          value={novo.id_insumo}
-          onChange={handleInputChange}
-          required
-        />
-        <input
-          type="number"
-          name="quantidade"
-          placeholder="Quantidade"
-          value={novo.quantidade}
-          onChange={handleInputChange}
-          required
-        />
-        <input
-          type="date"
-          name="data_saida"
-          value={novo.data_saida}
-          onChange={handleInputChange}
-          required
-        />
-        <input
-          type="text"
-          name="motivo"
-          placeholder="Motivo"
-          value={novo.motivo}
-          onChange={handleInputChange}
-        />
+    <div className="saida-insumo">
+      <h2>Saídas de Insumos</h2>
+      <form onSubmit={handleSubmit}>
+        <div className="saida-insumo-form-row">
+          <label>
+            Insumo
+            <select
+              name="id_insumo"
+              value={novo.id_insumo}
+              onChange={handleInputChange}
+              required
+            >
+              <option value="">Selecione o insumo</option>
+              {insumos.map(insumo => (
+                <option key={insumo.id_insumo} value={insumo.id_insumo}>
+                  {insumo.nome}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Quantidade
+            <input
+              type="number"
+              name="quantidade"
+              placeholder="Quantidade"
+              value={novo.quantidade}
+              onChange={handleInputChange}
+              required
+              min="0"
+            />
+          </label>
+        </div>
+        <div className="saida-insumo-form-row">
+          <label>
+            Data da Saída
+            <input
+              type="date"
+              name="data_saida"
+              value={novo.data_saida}
+              onChange={handleInputChange}
+              required
+            />
+          </label>
+          <label>
+            Motivo
+            <input
+              type="text"
+              name="motivo"
+              placeholder="Motivo da saída"
+              value={novo.motivo}
+              onChange={handleInputChange}
+            />
+          </label>
+        </div>
         <button type="submit">{editando ? 'Atualizar' : 'Adicionar'}</button>
         {editando && (
-          <button type="button" onClick={() => { setEditando(null); setNovo({ id_insumo: '', quantidade: '', data_saida: '', motivo: '' }); }}>
+          <button
+            type="button"
+            onClick={() => {
+              setEditando(null);
+              setNovo({ id_insumo: '', quantidade: '', data_saida: '', motivo: '' });
+            }}
+          >
             Cancelar
           </button>
         )}
       </form>
-      <table border="1" cellPadding="8" cellSpacing="0" style={{ marginTop: '20px', width: '100%' }}>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>ID Insumo</th>
-            <th>Quantidade</th>
-            <th>Data</th>
-            <th>Motivo</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {saidas.map(saida => (
-            <tr key={saida.id_saida}>
-              <td>{saida.id_saida}</td>
-              <td>{saida.id_insumo}</td>
-              <td>{saida.quantidade}</td>
-              <td>{new Date(saida.data_saida).toLocaleDateString()}</td>
-              <td>{saida.motivo}</td>
-              <td>
-                <button onClick={() => handleEditar(saida)}>Editar</button>
-                <button onClick={() => handleExcluir(saida.id_saida)}>Excluir</button>
-              </td>
+      <div className="saida-insumo-lista-container">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Insumo</th>
+              <th>Quantidade</th>
+              <th>Data</th>
+              <th>Motivo</th>
+              <th>Ações</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {saidas.map(saida => (
+              <tr key={saida.id_saida}>
+                <td>{saida.id_saida}</td>
+                <td>
+                  {insumos.find(i => i.id_insumo === saida.id_insumo)?.nome || saida.id_insumo}
+                </td>
+                <td>{saida.quantidade}</td>
+                <td>{new Date(saida.data_saida).toLocaleDateString()}</td>
+                <td>{saida.motivo}</td>
+                <td className="acoes">
+                  <button
+                    className="btn-acao editar"
+                    onClick={() => handleEditar(saida)}
+                    title="Editar"
+                  >
+                    <FaEdit />
+                  </button>
+                  <button
+                    className="btn-acao excluir"
+                    onClick={() => handleExcluir(saida.id_saida)}
+                    title="Excluir"
+                  >
+                    <FaTrash />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

@@ -1,0 +1,178 @@
+.saida-insumo {
+  max-width: 900px;
+  margin: 32px auto;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  padding: 32px 24px;
+}
+
+.saida-insumo h2 {
+  font-size: 2em;
+  color: #2d3436;
+  margin-bottom: 24px;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.saida-insumo-form-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.saida-insumo-form-row label {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  font-weight: 500;
+  color: #2d3436;
+  font-size: 1em;
+  margin-right: 8px;
+  gap: 4px;
+}
+.saida-insumo-form-row label:last-child {
+  margin-right: 0;
+}
+
+.saida-insumo-form-row input,
+.saida-insumo-form-row select {
+  margin: 8px 0;
+  padding: 10px 12px;
+  border: 1px solid #dfe6e9;
+  border-radius: 6px;
+  font-size: 1em;
+  box-sizing: border-box;
+  transition: border 0.2s;
+}
+
+.saida-insumo-form-row input:focus,
+.saida-insumo-form-row select:focus {
+  border: 1.5px solid #3498db;
+  outline: none;
+}
+
+.saida-insumo form button[type="submit"] {
+  background: #0984e3;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 18px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-right: 8px;
+  transition: background 0.2s;
+}
+
+.saida-insumo form button[type="submit"]:hover {
+  background: #0652dd;
+}
+
+.saida-insumo form button[type="button"] {
+  background: #e17055;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 18px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.saida-insumo form button[type="button"]:hover {
+  background: #d63031;
+}
+
+.saida-insumo-lista-container {
+  max-height: 50vh;
+  overflow-y: auto;
+  margin-top: 12px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.07);
+  background: #f7fafd;
+  overflow-x: auto;
+}
+
+.saida-insumo-lista-container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.saida-insumo-lista-container thead th {
+  position: sticky;
+  top: 0;
+  background: #3498db;
+  color: #fff;
+  z-index: 1;
+}
+
+.saida-insumo th, .saida-insumo td {
+  padding: 14px 10px;
+  text-align: center;
+}
+
+.saida-insumo th {
+  background: #3498db;
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.saida-insumo td {
+  color: #2d3436;
+  background: #f7fafd;
+}
+
+.saida-insumo td.acoes {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-acao {
+  background: #0984e3;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  margin: 0 2px;
+  cursor: pointer;
+  font-size: 1.1em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.btn-acao.editar {
+  background: #0984e3;
+}
+.btn-acao.editar:hover {
+  background: #0652dd;
+}
+
+.btn-acao.excluir {
+  background: #e17055;
+}
+.btn-acao.excluir:hover {
+  background: #d63031;
+}
+
+@media (max-width: 700px) {
+  .saida-insumo {
+    padding: 12px 2vw;
+  }
+  .saida-insumo-form-row {
+    flex-direction: column;
+    gap: 4px;
+  }
+  .saida-insumo-lista-container table, .saida-insumo th, .saida-insumo td {
+    font-size: 0.95em;
+    padding: 8px 4px;
+  }
+  .saida-insumo td.acoes {
+    flex-direction: column;
+    gap: 4px;
+  }
+}

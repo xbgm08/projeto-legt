@@ -135,7 +135,7 @@ const SaidaInsumo = () => {
             />
           </label>
         </div>
-        <button type="submit">{editando ? 'Atualizar' : 'Adicionar'}</button>
+        <button type="submit">{editando ? 'Atualizar' : 'Salvar'}</button>
         {editando && (
           <button
             type="button"

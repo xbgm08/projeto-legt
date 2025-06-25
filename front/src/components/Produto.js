@@ -197,7 +197,7 @@ const Produto = () => {
             />
           </label>
         </div>
-        <button type="submit">{editando ? 'Atualizar' : 'Adicionar'}</button>
+        <button type="submit">{editando ? 'Atualizar' : 'Salvar'}</button>
         {editando && (
           <button type="button" onClick={() => { setEditando(null); setNovoProduto({ nome: '', descricao: '', preco: '', quantidade_estoque: '', unidade_medida: '', id_categoria: '', status: true }); }}>
             Cancelar

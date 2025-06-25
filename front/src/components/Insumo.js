@@ -5,6 +5,8 @@ import {
   updateInsumo,
   deleteInsumo,
 } from '../services/insumoService';
+import '../styles/Insumo.css';
+import { FaEdit, FaTrash } from 'react-icons/fa';
 
 const Insumo = () => {
   const [insumos, setInsumos] = useState([]);
@@ -70,76 +72,118 @@ const Insumo = () => {
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h2>Lista de Insumos</h2>
-      <form onSubmit={handleSubmit} style={{ marginBottom: '20px' }}>
-        <input
-          type="text"
-          name="nome"
-          placeholder="Nome"
-          value={novoInsumo.nome}
-          onChange={handleInputChange}
-          required
-        />
-        <input
-          type="number"
-          name="quantidade_estoque"
-          placeholder="Quantidade"
-          value={novoInsumo.quantidade_estoque}
-          onChange={handleInputChange}
-          required
-        />
-        <input
-          type="text"
-          name="unidade_medida"
-          placeholder="Unidade"
-          value={novoInsumo.unidade_medida}
-          onChange={handleInputChange}
-          required
-        />
-        <label>
-          Ativo
-          <input
-            type="checkbox"
-            name="status"
-            checked={novoInsumo.status}
-            onChange={handleInputChange}
-          />
-        </label>
-        <button type="submit">{editando ? 'Atualizar' : 'Adicionar'}</button>
+    <div className="insumo">
+      <h2>Insumos</h2>
+      <form onSubmit={handleSubmit}>
+        <div className="insumo-form-row">
+          <label>
+            Nome
+            <input
+              type="text"
+              name="nome"
+              placeholder="Digite o nome do insumo"
+              value={novoInsumo.nome}
+              onChange={handleInputChange}
+              required
+            />
+          </label>
+        </div>
+        <div className="insumo-form-row">
+          <label>
+            Unidade de Medida
+            <input
+              type="text"
+              name="unidade_medida"
+              placeholder="Ex: kg, un, l"
+              value={novoInsumo.unidade_medida}
+              onChange={handleInputChange}
+              required
+            />
+          </label>
+          <label>
+            Estoque
+            <input
+              type="number"
+              name="quantidade_estoque"
+              placeholder="Quantidade em estoque"
+              value={novoInsumo.quantidade_estoque}
+              onChange={handleInputChange}
+              required
+              min="0"
+            />
+          </label>
+        </div>
+        <div className="insumo-form-row">
+          <label style={{ maxWidth: 180 }}>
+            Ativo
+            <input
+              type="checkbox"
+              name="status"
+              checked={novoInsumo.status}
+              onChange={handleInputChange}
+              style={{ width: 20, height: 20, marginTop: 8 }}
+            />
+          </label>
+        </div>
+        <button type="submit">{editando ? 'Atualizar' : 'Salvar'}</button>
         {editando && (
-          <button type="button" onClick={() => { setEditando(null); setNovoInsumo({ nome: '', quantidade_estoque: '', unidade_medida: '', status: true }); }}>
+          <button
+            type="button"
+            onClick={() => {
+              setEditando(null);
+              setNovoInsumo({
+                nome: '',
+                unidade_medida: '',
+                quantidade_estoque: '',
+                status: true,
+              });
+            }}
+          >
             Cancelar
           </button>
         )}
       </form>
-      <table border="1" cellPadding="8" cellSpacing="0" style={{ marginTop: '20px', width: '100%' }}>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nome</th>
-            <th>Quantidade</th>
-            <th>Unidade</th>
-            <th>Status</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {insumos.map(insumo => (
-            <tr key={insumo.id_insumo}>
-              <td>{insumo.id_insumo}</td>
-              <td>{insumo.nome}</td>
-              <td>{insumo.quantidade_estoque}</td>
-              <td>{insumo.unidade_medida}</td>
-              <td>{insumo.status ? 'Ativo' : 'Inativo'}</td>
-              <td>
-                <button onClick={() => handleEditar(insumo)}>Editar</button>
-                <button onClick={() => handleExcluir(insumo.id_insumo)}>Excluir</button>
-              </td>
+      <div className="insumo-lista-container">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nome</th>
+              <th>Unidade</th>
+              <th>Estoque</th>
+              <th>Status</th>
+              <th>Ações</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {insumos.map(insumo => (
+              <tr key={insumo.id_insumo}>
+                <td>{insumo.id_insumo}</td>
+                <td>{insumo.nome}</td>
+                <td>{insumo.unidade_medida}</td>
+                <td>{insumo.quantidade_estoque}</td>
+                <td>{insumo.status ? 'Ativo' : 'Inativo'}</td>
+                <td className="acoes">
+                  <button
+                    className="btn-acao editar"
+                    onClick={() => handleEditar(insumo)}
+                    title="Editar"
+                  >
+                    <FaEdit />
+                  </button>
+                  <button
+                    className="btn-acao excluir"
+                    onClick={() => handleExcluir(insumo.id_insumo)}
+                    title="Excluir"
+                  >
+                    <FaTrash />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

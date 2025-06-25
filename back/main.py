@@ -233,7 +233,7 @@ def criar_entrada(e: Entrada):
     return e
 
 # Saida Insumo
-@app.get("/saidas_insumo", response_model=List[SaidaInsumo])
+@app.get("/saidas-insumo", response_model=List[SaidaInsumo])
 def listar_saidas_insumo():
     con = get_conn()
     try:
@@ -250,7 +250,7 @@ def listar_saidas_insumo():
     finally:
         con.close()
 
-@app.post("/saidas_insumo", response_model=SaidaInsumo)
+@app.post("/saidas-insumo", response_model=SaidaInsumo)
 def criar_saida_insumo(s: SaidaInsumo):
     con = get_conn()
     try:
@@ -268,7 +268,7 @@ def criar_saida_insumo(s: SaidaInsumo):
     return s
 
 # Produto Insumo
-@app.get("/produtos_insumo", response_model=List[ProdutoInsumo])
+@app.get("/produtos-insumo", response_model=List[ProdutoInsumo])
 def listar_produtos_insumo():
     con = get_conn()
     try:
@@ -284,7 +284,7 @@ def listar_produtos_insumo():
     finally:
         con.close()
 
-@app.post("/produtos_insumo", response_model=ProdutoInsumo)
+@app.post("/produtos-insumo", response_model=ProdutoInsumo)
 def criar_produto_insumo(pi: ProdutoInsumo):
     con = get_conn()
     try:
@@ -301,7 +301,7 @@ def criar_produto_insumo(pi: ProdutoInsumo):
     return pi
 
 # Visita Cliente
-@app.post("/visitas_cliente", response_model=VisitaCliente)
+@app.post("/visita-cliente", response_model=VisitaCliente)
 def criar_visita_cliente(v: VisitaCliente):
     con = get_conn()
     try:
@@ -318,7 +318,7 @@ def criar_visita_cliente(v: VisitaCliente):
         con.close()
     return v
 
-@app.put("/visitas_cliente/{id}", response_model=VisitaCliente)
+@app.put("/visita-cliente/{id}", response_model=VisitaCliente)
 def update_visita_cliente(id: int, v: VisitaCliente):
     con = get_conn()
     try:

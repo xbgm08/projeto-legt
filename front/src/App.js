@@ -3,7 +3,6 @@ import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-do
 import { FaList, FaTruck, FaBoxOpen, FaCubes, FaArrowDown, FaArrowUp, FaLink, FaClipboardList } from 'react-icons/fa';
 import Categoria from './components/Categoria';
 import Fornecedor from './components/Fornecedor';
-import FornecedorCategoria from './components/FornecedorCategoria';
 import Produto from './components/Produto';
 import Insumo from './components/Insumo';
 import Entrada from './components/Entrada';

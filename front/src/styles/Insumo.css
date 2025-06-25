@@ -3,7 +3,7 @@
   margin: 32px auto;
   background: #fff;
   border-radius: 14px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
   padding: 32px 24px;
 }
 
@@ -31,6 +31,7 @@
   margin-right: 8px;
   gap: 4px;
 }
+
 .insumo-form-row label:last-child {
   margin-right: 0;
 }
@@ -104,7 +105,8 @@
   z-index: 1;
 }
 
-.insumo th, .insumo td {
+.insumo th,
+.insumo td {
   padding: 14px 10px;
   text-align: center;
 }
@@ -146,6 +148,7 @@
 .btn-acao.editar {
   background: #0984e3;
 }
+
 .btn-acao.editar:hover {
   background: #0652dd;
 }
@@ -153,6 +156,7 @@
 .btn-acao.excluir {
   background: #e17055;
 }
+
 .btn-acao.excluir:hover {
   background: #d63031;
 }
@@ -161,16 +165,37 @@
   .insumo {
     padding: 12px 2vw;
   }
+
   .insumo-form-row {
     flex-direction: column;
     gap: 4px;
   }
-  .insumo-lista-container table, .insumo th, .insumo td {
+
+  .insumo-lista-container table,
+  .insumo th,
+  .insumo td {
     font-size: 0.95em;
     padding: 8px 4px;
   }
+
   .insumo td.acoes {
     flex-direction: column;
     gap: 4px;
+  }
+}
+
+.spinner {
+  display: inline-block;
+  width: 48px;
+  height: 48px;
+  border: 5px solid #3498db;
+  border-radius: 50%;
+  border-top: 5px solid #f3f3f3;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }

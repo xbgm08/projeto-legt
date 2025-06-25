@@ -15,18 +15,21 @@ const Fornecedor = () => {
     nome: '', contato: '', porte: '', cnpj: '', canal_compra: '', observacao: ''
   });
   const [editando, setEditando] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     carregarFornecedores();
   }, []);
 
   const carregarFornecedores = async () => {
+    setLoading(true);
     try {
       const data = await fetchFornecedores();
       setFornecedores(data);
     } catch (error) {
       console.error("Erro ao carregar fornecedores:", error);
     }
+    setLoading(false);
   };
 
   const handleInputChange = (e) => {
@@ -167,49 +170,55 @@ const Fornecedor = () => {
         )}
       </form>
       <div className="fornecedor-lista-container">
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nome</th>
-              <th>Contato</th>
-              <th>Porte</th>
-              <th>CNPJ</th>
-              <th>Canal de Compra</th>
-              <th>Observação</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {fornecedores.map(fornecedor => (
-              <tr key={fornecedor.id_fornecedor}>
-                <td>{fornecedor.id_fornecedor}</td>
-                <td>{fornecedor.nome}</td>
-                <td>{fornecedor.contato}</td>
-                <td>{fornecedor.porte}</td>
-                <td>{fornecedor.cnpj}</td>
-                <td>{fornecedor.canal_compra}</td>
-                <td>{fornecedor.observacao}</td>
-                <td className="acoes">
-                  <button
-                    className="btn-acao editar"
-                    onClick={() => handleEditar(fornecedor)}
-                    title="Editar"
-                  >
-                    <FaEdit />
-                  </button>
-                  <button
-                    className="btn-acao excluir"
-                    onClick={() => handleExcluir(fornecedor.id_fornecedor)}
-                    title="Excluir"
-                  >
-                    <FaTrash />
-                  </button>
-                </td>
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '40px 0' }}>
+            <span className="spinner" />
+          </div>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Contato</th>
+                <th>Porte</th>
+                <th>CNPJ</th>
+                <th>Canal de Compra</th>
+                <th>Observação</th>
+                <th>Ações</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {fornecedores.map(fornecedor => (
+                <tr key={fornecedor.id_fornecedor}>
+                  <td>{fornecedor.id_fornecedor}</td>
+                  <td>{fornecedor.nome}</td>
+                  <td>{fornecedor.contato}</td>
+                  <td>{fornecedor.porte}</td>
+                  <td>{fornecedor.cnpj}</td>
+                  <td>{fornecedor.canal_compra}</td>
+                  <td>{fornecedor.observacao}</td>
+                  <td className="acoes">
+                    <button
+                      className="btn-acao editar"
+                      onClick={() => handleEditar(fornecedor)}
+                      title="Editar"
+                    >
+                      <FaEdit />
+                    </button>
+                    <button
+                      className="btn-acao excluir"
+                      onClick={() => handleExcluir(fornecedor.id_fornecedor)}
+                      title="Excluir"
+                    >
+                      <FaTrash />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );

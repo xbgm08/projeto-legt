@@ -14,11 +14,23 @@ const SaidaInsumo = () => {
   const [novo, setNovo] = useState({ id_insumo: '', quantidade: '', data_saida: '', motivo: '' });
   const [editando, setEditando] = useState(null);
   const [insumos, setInsumos] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    carregarSaidas();
-    carregarInsumos();
+    carregarTudo();
   }, []);
+
+  const carregarTudo = async () => {
+    setLoading(true);
+    try {
+      await Promise.all([
+        carregarSaidas(),
+        carregarInsumos()
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const carregarSaidas = async () => {
     try {
@@ -82,115 +94,123 @@ const SaidaInsumo = () => {
   return (
     <div className="saida-insumo">
       <h2>Saídas de Insumos</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="saida-insumo-form-row">
-          <label>
-            Insumo
-            <select
-              name="id_insumo"
-              value={novo.id_insumo}
-              onChange={handleInputChange}
-              required
-            >
-              <option value="">Selecione o insumo</option>
-              {insumos.map(insumo => (
-                <option key={insumo.id_insumo} value={insumo.id_insumo}>
-                  {insumo.nome}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Quantidade
-            <input
-              type="number"
-              name="quantidade"
-              placeholder="Quantidade"
-              value={novo.quantidade}
-              onChange={handleInputChange}
-              required
-              min="0"
-            />
-          </label>
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '40px 0' }}>
+          <span className="spinner" />
         </div>
-        <div className="saida-insumo-form-row">
-          <label>
-            Data da Saída
-            <input
-              type="date"
-              name="data_saida"
-              value={novo.data_saida}
-              onChange={handleInputChange}
-              required
-            />
-          </label>
-          <label>
-            Motivo
-            <input
-              type="text"
-              name="motivo"
-              placeholder="Motivo da saída"
-              value={novo.motivo}
-              onChange={handleInputChange}
-            />
-          </label>
-        </div>
-        <button type="submit">{editando ? 'Atualizar' : 'Salvar'}</button>
-        {editando && (
-          <button
-            type="button"
-            onClick={() => {
-              setEditando(null);
-              setNovo({ id_insumo: '', quantidade: '', data_saida: '', motivo: '' });
-            }}
-          >
-            Cancelar
-          </button>
-        )}
-      </form>
-      <div className="saida-insumo-lista-container">
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Insumo</th>
-              <th>Quantidade</th>
-              <th>Data</th>
-              <th>Motivo</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {saidas.map(saida => (
-              <tr key={saida.id_saida}>
-                <td>{saida.id_saida}</td>
-                <td>
-                  {insumos.find(i => i.id_insumo === saida.id_insumo)?.nome || saida.id_insumo}
-                </td>
-                <td>{saida.quantidade}</td>
-                <td>{new Date(saida.data_saida).toLocaleDateString()}</td>
-                <td>{saida.motivo}</td>
-                <td className="acoes">
-                  <button
-                    className="btn-acao editar"
-                    onClick={() => handleEditar(saida)}
-                    title="Editar"
-                  >
-                    <FaEdit />
-                  </button>
-                  <button
-                    className="btn-acao excluir"
-                    onClick={() => handleExcluir(saida.id_saida)}
-                    title="Excluir"
-                  >
-                    <FaTrash />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      ) : (
+        <>
+          <form onSubmit={handleSubmit}>
+            <div className="saida-insumo-form-row">
+              <label>
+                Insumo
+                <select
+                  name="id_insumo"
+                  value={novo.id_insumo}
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="">Selecione o insumo</option>
+                  {insumos.map(insumo => (
+                    <option key={insumo.id_insumo} value={insumo.id_insumo}>
+                      {insumo.nome}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Quantidade
+                <input
+                  type="number"
+                  name="quantidade"
+                  placeholder="Quantidade"
+                  value={novo.quantidade}
+                  onChange={handleInputChange}
+                  required
+                  min="0"
+                />
+              </label>
+            </div>
+            <div className="saida-insumo-form-row">
+              <label>
+                Data da Saída
+                <input
+                  type="date"
+                  name="data_saida"
+                  value={novo.data_saida}
+                  onChange={handleInputChange}
+                  required
+                />
+              </label>
+              <label>
+                Motivo
+                <input
+                  type="text"
+                  name="motivo"
+                  placeholder="Motivo da saída"
+                  value={novo.motivo}
+                  onChange={handleInputChange}
+                />
+              </label>
+            </div>
+            <button type="submit">{editando ? 'Atualizar' : 'Salvar'}</button>
+            {editando && (
+              <button
+                type="button"
+                onClick={() => {
+                  setEditando(null);
+                  setNovo({ id_insumo: '', quantidade: '', data_saida: '', motivo: '' });
+                }}
+              >
+                Cancelar
+              </button>
+            )}
+          </form>
+          <div className="saida-insumo-lista-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Insumo</th>
+                  <th>Quantidade</th>
+                  <th>Data</th>
+                  <th>Motivo</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {saidas.map(saida => (
+                  <tr key={saida.id_saida}>
+                    <td>{saida.id_saida}</td>
+                    <td>
+                      {insumos.find(i => i.id_insumo === saida.id_insumo)?.nome || saida.id_insumo}
+                    </td>
+                    <td>{saida.quantidade}</td>
+                    <td>{new Date(saida.data_saida).toLocaleDateString()}</td>
+                    <td>{saida.motivo}</td>
+                    <td className="acoes">
+                      <button
+                        className="btn-acao editar"
+                        onClick={() => handleEditar(saida)}
+                        title="Editar"
+                      >
+                        <FaEdit />
+                      </button>
+                      <button
+                        className="btn-acao excluir"
+                        onClick={() => handleExcluir(saida.id_saida)}
+                        title="Excluir"
+                      >
+                        <FaTrash />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
     </div>
   );
 };

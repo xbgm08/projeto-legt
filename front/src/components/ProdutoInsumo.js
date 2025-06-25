@@ -16,12 +16,24 @@ const ProdutoInsumo = () => {
   const [editando, setEditando] = useState(null);
   const [produtos, setProdutos] = useState([]);
   const [insumos, setInsumos] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    carregarProdutoInsumo();
-    carregarProdutos();
-    carregarInsumos();
+    carregarTudo();
   }, []);
+
+  const carregarTudo = async () => {
+    setLoading(true);
+    try {
+      await Promise.all([
+        carregarProdutoInsumo(),
+        carregarProdutos(),
+        carregarInsumos()
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const carregarProdutoInsumo = async () => {
     try {
@@ -93,107 +105,115 @@ const ProdutoInsumo = () => {
   return (
     <div className="produto-insumo">
       <h2>Relação entre Produtos e Insumos</h2>
-      <form onSubmit={handleSubmit} className="produto-insumo-form">
-        <div className="produto-insumo-form-row">
-          <label>
-            Produto
-            <select
-              name="id_produto"
-              value={novo.id_produto}
-              onChange={handleInputChange}
-              required
-            >
-              <option value="">Selecione o produto</option>
-              {produtos.map(prod => (
-                <option key={prod.id_produto} value={prod.id_produto}>
-                  {prod.nome}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Insumo
-            <select
-              name="id_insumo"
-              value={novo.id_insumo}
-              onChange={handleInputChange}
-              required
-            >
-              <option value="">Selecione o insumo</option>
-              {insumos.map(insumo => (
-                <option key={insumo.id_insumo} value={insumo.id_insumo}>
-                  {insumo.nome}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Quantidade Utilizada
-            <input
-              type="number"
-              name="quantidade_utilizada"
-              placeholder="Quantidade utilizada"
-              value={novo.quantidade_utilizada}
-              onChange={handleInputChange}
-              required
-              min="0"
-            />
-          </label>
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '40px 0' }}>
+          <span className="spinner" />
         </div>
-        <button type="submit">{editando ? 'Atualizar' : 'Salvar'}</button>
-        {editando && (
-          <button
-            type="button"
-            onClick={() => {
-              setEditando(null);
-              setNovo({ id_produto: '', id_insumo: '', quantidade_utilizada: '' });
-            }}
-          >
-            Cancelar
-          </button>
-        )}
-      </form>
-      <div className="produto-insumo-lista-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Produto</th>
-              <th>Insumo</th>
-              <th>Quantidade Utilizada</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {produtosInsumos.map(item => (
-              <tr key={`${item.id_produto}-${item.id_insumo}`}>
-                <td>
-                  {produtos.find(p => p.id_produto === item.id_produto)?.nome || item.id_produto}
-                </td>
-                <td>
-                  {insumos.find(i => i.id_insumo === item.id_insumo)?.nome || item.id_insumo}
-                </td>
-                <td>{item.quantidade_utilizada || item.quantidade}</td>
-                <td className="acoes">
-                  <button
-                    className="btn-acao editar"
-                    onClick={() => handleEditar(item)}
-                    title="Editar"
-                  >
-                    <FaEdit />
-                  </button>
-                  <button
-                    className="btn-acao excluir"
-                    onClick={() => handleExcluir(item.id_produto, item.id_insumo)}
-                    title="Excluir"
-                  >
-                    <FaTrash />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      ) : (
+        <>
+          <form onSubmit={handleSubmit} className="produto-insumo-form">
+            <div className="produto-insumo-form-row">
+              <label>
+                Produto
+                <select
+                  name="id_produto"
+                  value={novo.id_produto}
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="">Selecione o produto</option>
+                  {produtos.map(prod => (
+                    <option key={prod.id_produto} value={prod.id_produto}>
+                      {prod.nome}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Insumo
+                <select
+                  name="id_insumo"
+                  value={novo.id_insumo}
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="">Selecione o insumo</option>
+                  {insumos.map(insumo => (
+                    <option key={insumo.id_insumo} value={insumo.id_insumo}>
+                      {insumo.nome}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Quantidade Utilizada
+                <input
+                  type="number"
+                  name="quantidade_utilizada"
+                  placeholder="Quantidade utilizada"
+                  value={novo.quantidade_utilizada}
+                  onChange={handleInputChange}
+                  required
+                  min="0"
+                />
+              </label>
+            </div>
+            <button type="submit">{editando ? 'Atualizar' : 'Salvar'}</button>
+            {editando && (
+              <button
+                type="button"
+                onClick={() => {
+                  setEditando(null);
+                  setNovo({ id_produto: '', id_insumo: '', quantidade_utilizada: '' });
+                }}
+              >
+                Cancelar
+              </button>
+            )}
+          </form>
+          <div className="produto-insumo-lista-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Produto</th>
+                  <th>Insumo</th>
+                  <th>Quantidade Utilizada</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {produtosInsumos.map(item => (
+                  <tr key={`${item.id_produto}-${item.id_insumo}`}>
+                    <td>
+                      {produtos.find(p => p.id_produto === item.id_produto)?.nome || item.id_produto}
+                    </td>
+                    <td>
+                      {insumos.find(i => i.id_insumo === item.id_insumo)?.nome || item.id_insumo}
+                    </td>
+                    <td>{item.quantidade_utilizada || item.quantidade}</td>
+                    <td className="acoes">
+                      <button
+                        className="btn-acao editar"
+                        onClick={() => handleEditar(item)}
+                        title="Editar"
+                      >
+                        <FaEdit />
+                      </button>
+                      <button
+                        className="btn-acao excluir"
+                        onClick={() => handleExcluir(item.id_produto, item.id_insumo)}
+                        title="Excluir"
+                      >
+                        <FaTrash />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
     </div>
   );
 };

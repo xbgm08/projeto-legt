@@ -18,12 +18,24 @@ const Entrada = () => {
   const [editando, setEditando] = useState(null);
   const [produtos, setProdutos] = useState([]);
   const [insumos, setInsumos] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    carregarEntradas();
-    carregarProdutos();
-    carregarInsumos();
+    carregarTudo();
   }, []);
+
+  const carregarTudo = async () => {
+    setLoading(true);
+    try {
+      await Promise.all([
+        carregarEntradas(),
+        carregarProdutos(),
+        carregarInsumos()
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const carregarEntradas = async () => {
     try {
@@ -114,122 +126,129 @@ const Entrada = () => {
   return (
     <div className="entrada">
       <h2>Registro de Entradas</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="entrada-form-row">
-          <label>
-            Produto
-            <select
-              name="id_produto"
-              value={newEntrada.id_produto}
-              onChange={handleInputChange}
-            >
-              <option value="">Selecione o produto</option>
-              {produtos.map(prod => (
-                <option key={prod.id_produto} value={prod.id_produto}>
-                  {prod.nome}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Insumo
-            <select
-              name="id_insumo"
-              value={newEntrada.id_insumo}
-              onChange={handleInputChange}
-            >
-              <option value="">Selecione o insumo</option>
-              {insumos.map(insumo => (
-                <option key={insumo.id_insumo} value={insumo.id_insumo}>
-                  {insumo.nome}
-                </option>
-              ))}
-            </select>
-          </label>
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '40px 0' }}>
+          <span className="spinner" />
         </div>
-        <div className="entrada-form-row">
-          <label>
-            Quantidade
-            <input
-              type="number"
-              name="quantidade"
-              placeholder="Quantidade"
-              value={newEntrada.quantidade}
-              onChange={handleInputChange}
-              required
-              min="0"
-            />
-          </label>
-          <label>
-            Data da Entrada
-            <input
-              type="date"
-              name="data_entrada"
-              value={newEntrada.data_entrada}
-              onChange={handleInputChange}
-              required
-            />
-          </label>
-        </div>
-        <button type="submit">{editando ? 'Atualizar' : 'Salvar'}</button>
-        {editando && (
-          <button
-            type="button"
-            onClick={() => {
-              setEditando(null);
-              setNewEntrada({ id_produto: '', id_insumo: '', quantidade: '', data_entrada: '' });
-            }}
-          >
-            Cancelar
-          </button>
-        )}
-      </form>
-
-      <div className="entrada-lista-container">
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Produto</th>
-              <th>Insumo</th>
-              <th>Quantidade</th>
-              <th>Data</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {entradas.map(entrada => (
-              <tr key={entrada.id_entrada}>
-                <td>{entrada.id_entrada}</td>
-                <td>
-                  {produtos.find(p => p.id_produto === entrada.id_produto)?.nome || '-'}
-                </td>
-                <td>
-                  {insumos.find(i => i.id_insumo === entrada.id_insumo)?.nome || '-'}
-                </td>
-                <td>{entrada.quantidade}</td>
-                <td>{new Date(entrada.data_entrada).toLocaleDateString()}</td>
-                <td className="acoes">
-                  <button
-                    className="btn-acao editar"
-                    onClick={() => handleEditar(entrada)}
-                    title="Editar"
-                  >
-                    <FaEdit />
-                  </button>
-                  <button
-                    className="btn-acao excluir"
-                    onClick={() => handleExcluir(entrada.id_entrada)}
-                    title="Excluir"
-                  >
-                    <FaTrash />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      ) : (
+        <>
+          <form onSubmit={handleSubmit}>
+            <div className="entrada-form-row">
+              <label>
+                Produto
+                <select
+                  name="id_produto"
+                  value={newEntrada.id_produto}
+                  onChange={handleInputChange}
+                >
+                  <option value="">Selecione o produto</option>
+                  {produtos.map(prod => (
+                    <option key={prod.id_produto} value={prod.id_produto}>
+                      {prod.nome}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Insumo
+                <select
+                  name="id_insumo"
+                  value={newEntrada.id_insumo}
+                  onChange={handleInputChange}
+                >
+                  <option value="">Selecione o insumo</option>
+                  {insumos.map(insumo => (
+                    <option key={insumo.id_insumo} value={insumo.id_insumo}>
+                      {insumo.nome}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+            <div className="entrada-form-row">
+              <label>
+                Quantidade
+                <input
+                  type="number"
+                  name="quantidade"
+                  placeholder="Quantidade"
+                  value={newEntrada.quantidade}
+                  onChange={handleInputChange}
+                  required
+                  min="0"
+                />
+              </label>
+              <label>
+                Data da Entrada
+                <input
+                  type="date"
+                  name="data_entrada"
+                  value={newEntrada.data_entrada}
+                  onChange={handleInputChange}
+                  required
+                />
+              </label>
+            </div>
+            <button type="submit">{editando ? 'Atualizar' : 'Salvar'}</button>
+            {editando && (
+              <button
+                type="button"
+                onClick={() => {
+                  setEditando(null);
+                  setNewEntrada({ id_produto: '', id_insumo: '', quantidade: '', data_entrada: '' });
+                }}
+              >
+                Cancelar
+              </button>
+            )}
+          </form>
+          <div className="entrada-lista-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Produto</th>
+                  <th>Insumo</th>
+                  <th>Quantidade</th>
+                  <th>Data</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {entradas.map(entrada => (
+                  <tr key={entrada.id_entrada}>
+                    <td>{entrada.id_entrada}</td>
+                    <td>
+                      {produtos.find(p => p.id_produto === entrada.id_produto)?.nome || '-'}
+                    </td>
+                    <td>
+                      {insumos.find(i => i.id_insumo === entrada.id_insumo)?.nome || '-'}
+                    </td>
+                    <td>{entrada.quantidade}</td>
+                    <td>{new Date(entrada.data_entrada).toLocaleDateString()}</td>
+                    <td className="acoes">
+                      <button
+                        className="btn-acao editar"
+                        onClick={() => handleEditar(entrada)}
+                        title="Editar"
+                      >
+                        <FaEdit />
+                      </button>
+                      <button
+                        className="btn-acao excluir"
+                        onClick={() => handleExcluir(entrada.id_entrada)}
+                        title="Excluir"
+                      >
+                        <FaTrash />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
       <ToastContainer />
     </div>
   );

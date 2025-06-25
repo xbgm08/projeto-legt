@@ -12,18 +12,21 @@ const Categoria = () => {
   const [categorias, setCategorias] = useState([]);
   const [novaCategoria, setNovaCategoria] = useState({ nome: '', descricao: '' });
   const [editando, setEditando] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadCategorias();
   }, []);
 
   const loadCategorias = async () => {
+    setLoading(true);
     try {
       const data = await getCategorias();
       setCategorias(data);
     } catch (error) {
       console.error("Erro ao carregar categorias:", error);
     }
+    setLoading(false);
   };
 
   const handleInputChange = (e) => {
@@ -33,7 +36,6 @@ const Categoria = () => {
   const handleSubmit = async (e) => {
     e.preventDefault(novaCategoria);
     try {
-      console.log()
       if (editando) {
         await updateCategoria(editando, novaCategoria);
       } else {
@@ -98,33 +100,39 @@ const Categoria = () => {
         )}
       </form>
       <div className="categoria-lista-container">
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nome</th>
-              <th>Descrição</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {(categorias || []).map(categoria => (
-              <tr key={categoria.id_categoria}>
-                <td>{categoria.id_categoria}</td>
-                <td>{categoria.nome}</td>
-                <td>{categoria.descricao}</td>
-                <td>
-                  <button className="btn-acao editar" onClick={() => handleEditar(categoria)} title="Editar">
-                    <FaEdit />
-                  </button>
-                  <button className="btn-acao excluir" onClick={() => handleExcluir(categoria.id_categoria)} title="Excluir">
-                    <FaTrash />
-                  </button>
-                </td>
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '40px 0' }}>
+            <span className="spinner" />
+          </div>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Descrição</th>
+                <th>Ações</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {(categorias || []).map(categoria => (
+                <tr key={categoria.id_categoria}>
+                  <td>{categoria.id_categoria}</td>
+                  <td>{categoria.nome}</td>
+                  <td>{categoria.descricao}</td>
+                  <td>
+                    <button className="btn-acao editar" onClick={() => handleEditar(categoria)} title="Editar">
+                      <FaEdit />
+                    </button>
+                    <button className="btn-acao excluir" onClick={() => handleExcluir(categoria.id_categoria)} title="Excluir">
+                      <FaTrash />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );

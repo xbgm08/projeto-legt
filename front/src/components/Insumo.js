@@ -12,18 +12,21 @@ const Insumo = () => {
   const [insumos, setInsumos] = useState([]);
   const [novoInsumo, setNovoInsumo] = useState({ nome: '', quantidade_estoque: '', unidade_medida: '', status: true });
   const [editando, setEditando] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     carregarInsumos();
   }, []);
 
   const carregarInsumos = async () => {
+    setLoading(true);
     try {
       const data = await fetchInsumos();
       setInsumos(data);
     } catch (error) {
       console.error("Erro ao carregar insumos:", error);
     }
+    setLoading(false);
   };
 
   const handleInputChange = (e) => {
@@ -144,45 +147,51 @@ const Insumo = () => {
         )}
       </form>
       <div className="insumo-lista-container">
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nome</th>
-              <th>Unidade</th>
-              <th>Estoque</th>
-              <th>Status</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {insumos.map(insumo => (
-              <tr key={insumo.id_insumo}>
-                <td>{insumo.id_insumo}</td>
-                <td>{insumo.nome}</td>
-                <td>{insumo.unidade_medida}</td>
-                <td>{insumo.quantidade_estoque}</td>
-                <td>{insumo.status ? 'Ativo' : 'Inativo'}</td>
-                <td className="acoes">
-                  <button
-                    className="btn-acao editar"
-                    onClick={() => handleEditar(insumo)}
-                    title="Editar"
-                  >
-                    <FaEdit />
-                  </button>
-                  <button
-                    className="btn-acao excluir"
-                    onClick={() => handleExcluir(insumo.id_insumo)}
-                    title="Excluir"
-                  >
-                    <FaTrash />
-                  </button>
-                </td>
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '40px 0' }}>
+            <span className="spinner" />
+          </div>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Unidade</th>
+                <th>Estoque</th>
+                <th>Status</th>
+                <th>Ações</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {insumos.map(insumo => (
+                <tr key={insumo.id_insumo}>
+                  <td>{insumo.id_insumo}</td>
+                  <td>{insumo.nome}</td>
+                  <td>{insumo.unidade_medida}</td>
+                  <td>{insumo.quantidade_estoque}</td>
+                  <td>{insumo.status ? 'Ativo' : 'Inativo'}</td>
+                  <td className="acoes">
+                    <button
+                      className="btn-acao editar"
+                      onClick={() => handleEditar(insumo)}
+                      title="Editar"
+                    >
+                      <FaEdit />
+                    </button>
+                    <button
+                      className="btn-acao excluir"
+                      onClick={() => handleExcluir(insumo.id_insumo)}
+                      title="Excluir"
+                    >
+                      <FaTrash />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );

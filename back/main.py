@@ -226,6 +226,19 @@ def criar_entrada(e: Entrada):
                     (e.id_produto, e.id_insumo, e.id_fornecedor, e.quantidade, e.data_entrada, e.tipo_entrada)
                 )
                 e.id_entrada = cur.fetchone()[0]
+
+                if e.id_insumo:
+                    cur.execute(
+                        "UPDATE insumo SET quantidade_estoque = quantidade_estoque + %s WHERE id_insumo = %s",
+                        (e.quantidade, e.id_insumo)
+                    )
+                elif e.id_produto:
+                    cur.execute(
+                        "UPDATE produto SET quantidade_estoque = quantidade_estoque + %s WHERE id_produto = %s",
+                        (e.quantidade, e.id_produto)
+                    )
+                
+                
     except Exception as ex:
         raise HTTPException(status_code=500, detail=str(ex))
     finally:
@@ -261,6 +274,11 @@ def criar_saida_insumo(s: SaidaInsumo):
                     (s.id_insumo, s.quantidade, s.data_saida, s.motivo)
                 )
                 s.id_saida = cur.fetchone()[0]
+                
+                cur.execute(
+                    "UPDATE insumo SET quantidade_estoque = quantidade_estoque - %s WHERE id_insumo = %s",
+                    (s.quantidade, s.id_insumo)
+                )
     except Exception as ex:
         raise HTTPException(status_code=500, detail=str(ex))
     finally:
@@ -389,15 +407,12 @@ def get_pedido_by_id(id: int):
 @app.post("/pedidos", response_model=PedidoSuper)
 def criar_pedido(p: PedidoSuper):
     con = get_conn()
-
-    print(f"Creating pedido: {p}")
     try:
         visita = VisitaCliente(
             data_hora=p.data_hora,
             quantidade_pessoas=p.quantidade_pessoas,
             observacao=p.observacao
         )
-
         visita_obj = criar_visita_cliente(visita)
         p.id_visita = visita_obj.id_visita
 
@@ -414,6 +429,22 @@ def criar_pedido(p: PedidoSuper):
                         "INSERT INTO item_pedido (id_pedido, id_produto, quantidade, preco_unitario) VALUES (%s, %s, %s, %s)",
                         (p.id_pedido, item.id_produto, item.quantidade, item.preco_unitario)
                     )
+                    
+                    cur.execute(
+                        "UPDATE produto SET quantidade_estoque = quantidade_estoque - %s WHERE id_produto = %s",
+                        (item.quantidade, item.id_produto)
+                    )
+                    
+                    cur.execute(
+                        "SELECT id_insumo, quantidade_utilizada FROM produto_insumo WHERE id_produto = %s",
+                        (item.id_produto,)
+                    )
+                    insumos_usados = cur.fetchall()
+                    for id_insumo, quantidade_utilizada in insumos_usados:
+                        cur.execute(
+                            "UPDATE insumo SET                             feat(backend): atualiza quantidades de estoque de insumos e produtos ao criar = quantidade_estoque - %s WHERE id_insumo = %s",
+                            (quantidade_utilizada * item.quantidade, id_insumo)
+                        )
     except Exception as ex:
         raise HTTPException(status_code=500, detail=str(ex))
     finally:

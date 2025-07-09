@@ -15,10 +15,6 @@ class Fornecedor(BaseModel):
     canal_compra: str
     observacao: Optional[str]
 
-class FornecedorCategoria(BaseModel):
-    id_fornecedor: int
-    id_categoria: int
-
 class Produto(BaseModel):
     id_produto: Optional[int] = None
     nome: str
@@ -43,7 +39,6 @@ class Entrada(BaseModel):
     id_fornecedor: int
     quantidade: float
     data_entrada: str
-    tipo_entrada: str
 
 class SaidaInsumo(BaseModel):
     id_saida: Optional[int] = None

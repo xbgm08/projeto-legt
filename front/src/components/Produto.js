@@ -226,7 +226,6 @@ const Produto = () => {
             <table>
               <thead>
                 <tr>
-                  <th>ID</th>
                   <th>Nome</th>
                   <th>Descrição</th>
                   <th>Categoria</th>
@@ -240,7 +239,6 @@ const Produto = () => {
               <tbody>
                 {produtos.map(produto => (
                   <tr key={produto.id_produto}>
-                    <td>{produto.id_produto}</td>
                     <td>{produto.nome}</td>
                     <td>{produto.descricao}</td>
                     <td>

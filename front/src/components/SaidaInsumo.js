@@ -170,7 +170,6 @@ const SaidaInsumo = () => {
             <table>
               <thead>
                 <tr>
-                  <th>ID</th>
                   <th>Insumo</th>
                   <th>Quantidade</th>
                   <th>Data</th>
@@ -181,7 +180,6 @@ const SaidaInsumo = () => {
               <tbody>
                 {saidas.map(saida => (
                   <tr key={saida.id_saida}>
-                    <td>{saida.id_saida}</td>
                     <td>
                       {insumos.find(i => i.id_insumo === saida.id_insumo)?.nome || saida.id_insumo}
                     </td>

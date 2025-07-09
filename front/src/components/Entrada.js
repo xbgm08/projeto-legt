@@ -7,6 +7,7 @@ import {
 } from '../services/entradaService';
 import { fetchProdutos } from '../services/produtoService';
 import { fetchInsumos } from '../services/insumoService';
+import { fetchFornecedores } from '../services/fornecedorService';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import '../styles/Entrada.css';
 import { ToastContainer, toast } from "react-toastify";
@@ -14,10 +15,11 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const Entrada = () => {
   const [entradas, setEntradas] = useState([]);
-  const [newEntrada, setNewEntrada] = useState({ id_produto: '', id_insumo: '', quantidade: '', data_entrada: '' });
+  const [newEntrada, setNewEntrada] = useState({ id_produto: '', id_insumo: '', id_fornecedor: '', quantidade: '', data_entrada: '' });
   const [editando, setEditando] = useState(null);
   const [produtos, setProdutos] = useState([]);
   const [insumos, setInsumos] = useState([]);
+  const [fornecedores, setFornecedores] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,7 +32,8 @@ const Entrada = () => {
       await Promise.all([
         carregarEntradas(),
         carregarProdutos(),
-        carregarInsumos()
+        carregarInsumos(),
+        carregarFornecedores()
       ]);
     } finally {
       setLoading(false);
@@ -64,17 +67,32 @@ const Entrada = () => {
     }
   };
 
+  const carregarFornecedores = async () => {
+    try {
+      const data = await fetchFornecedores();
+      setFornecedores(data);
+    } catch (error) {
+      console.error("Erro ao carregar fornecedores:", error);
+    }
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewEntrada({ ...newEntrada, [name]: value });
+    let parsedValue = value;
+
+    if (name === "id_fornecedor" || name === "id_produto" || name === "id_insumo") {
+        parsedValue = value ? parseInt(value) : null;
+    } else if (name === "quantidade") {
+        parsedValue = parseFloat(value) || "";
+    }
+
+    setNewEntrada({ ...newEntrada, [name]: parsedValue });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const loadingToastId = toast.loading("Carregando...");
-
-
     const temProduto = !!newEntrada.id_produto;
     const temInsumo = !!newEntrada.id_insumo;
     if ((temProduto && temInsumo) || (!temProduto && !temInsumo)) {
@@ -83,16 +101,25 @@ const Entrada = () => {
       return;
     }
 
+    const entradaPayload = {
+        ...newEntrada,
+        id_produto: Number(newEntrada.id_produto),
+        id_insumo:  Number(newEntrada.id_insumo), 
+        id_fornecedor:  Number(newEntrada.id_fornecedor), 
+        quantidade:  Number(newEntrada.quantidade) || 0,
+      };
+
     try {
+      console.log("Salvando entrada:", newEntrada);
       if (editando) {
-        await updateEntry(editando, newEntrada);
+        await updateEntry(editando, entradaPayload);
       } else {
-        await createEntry(newEntrada);
+        await createEntry(entradaPayload);
       }
 
       toast.dismiss(loadingToastId);
       toast.success("Entrada salva com sucesso!");
-      setNewEntrada({ id_produto: '', id_insumo: '', quantidade: '', data_entrada: '' });
+      setNewEntrada({ id_produto: '', id_insumo: '', id_fornecedor: '', quantidade: '', data_entrada: '' });
       setEditando(null);
       carregarEntradas();
     } catch (error) {
@@ -106,6 +133,7 @@ const Entrada = () => {
     setNewEntrada({
       id_produto: entrada.id_produto,
       id_insumo: entrada.id_insumo,
+      id_fornecedor: entrada.id_fornecedor,
       quantidade: entrada.quantidade,
       data_entrada: entrada.data_entrada ? entrada.data_entrada.slice(0, 10) : '',
     });
@@ -164,6 +192,21 @@ const Entrada = () => {
                   ))}
                 </select>
               </label>
+              <label>
+                Fornecedor
+                <select
+                  name="id_fornecedor"
+                  value={newEntrada.id_fornecedor}
+                  onChange={handleInputChange}
+                >
+                  <option value="">Selecione o fornecedor</option>
+                  {fornecedores.map(fornecedor => (
+                    <option key={fornecedor.id_fornecedor} value={fornecedor.id_fornecedor}>
+                      {fornecedor.nome}
+                    </option>
+                  ))}
+                </select>
+              </label>
             </div>
             <div className="entrada-form-row">
               <label>
@@ -195,7 +238,7 @@ const Entrada = () => {
                 type="button"
                 onClick={() => {
                   setEditando(null);
-                  setNewEntrada({ id_produto: '', id_insumo: '', quantidade: '', data_entrada: '' });
+                  setNewEntrada({ id_produto: '', id_insumo: '', id_fornecedor: '', quantidade: '', data_entrada: '' });
                 }}
               >
                 Cancelar
@@ -206,9 +249,9 @@ const Entrada = () => {
             <table>
               <thead>
                 <tr>
-                  <th>ID</th>
                   <th>Produto</th>
                   <th>Insumo</th>
+                  <th>Fornecedor</th>
                   <th>Quantidade</th>
                   <th>Data</th>
                   <th>Ações</th>
@@ -217,12 +260,14 @@ const Entrada = () => {
               <tbody>
                 {entradas.map(entrada => (
                   <tr key={entrada.id_entrada}>
-                    <td>{entrada.id_entrada}</td>
                     <td>
                       {produtos.find(p => p.id_produto === entrada.id_produto)?.nome || '-'}
                     </td>
                     <td>
                       {insumos.find(i => i.id_insumo === entrada.id_insumo)?.nome || '-'}
+                    </td>
+                    <td>
+                      {fornecedores.find(f => f.id_fornecedor === entrada.id_fornecedor)?.nome || '-'}
                     </td>
                     <td>{entrada.quantidade}</td>
                     <td>{new Date(entrada.data_entrada).toLocaleDateString()}</td>

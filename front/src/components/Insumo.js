@@ -155,7 +155,6 @@ const Insumo = () => {
           <table>
             <thead>
               <tr>
-                <th>ID</th>
                 <th>Nome</th>
                 <th>Unidade</th>
                 <th>Estoque</th>
@@ -166,7 +165,6 @@ const Insumo = () => {
             <tbody>
               {insumos.map(insumo => (
                 <tr key={insumo.id_insumo}>
-                  <td>{insumo.id_insumo}</td>
                   <td>{insumo.nome}</td>
                   <td>{insumo.unidade_medida}</td>
                   <td>{insumo.quantidade_estoque}</td>

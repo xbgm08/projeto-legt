@@ -108,7 +108,6 @@ const Categoria = () => {
           <table>
             <thead>
               <tr>
-                <th>ID</th>
                 <th>Nome</th>
                 <th>Descrição</th>
                 <th>Ações</th>
@@ -117,7 +116,6 @@ const Categoria = () => {
             <tbody>
               {(categorias || []).map(categoria => (
                 <tr key={categoria.id_categoria}>
-                  <td>{categoria.id_categoria}</td>
                   <td>{categoria.nome}</td>
                   <td>{categoria.descricao}</td>
                   <td>

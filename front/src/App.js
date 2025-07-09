@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { FaList, FaTruck, FaBoxOpen, FaCubes, FaArrowDown, FaArrowUp, FaLink, FaClipboardList } from 'react-icons/fa';
+import { FaHome, FaList, FaTruck, FaBoxOpen, FaCubes, FaArrowDown, FaArrowUp, FaLink, FaClipboardList, FaChartBar } from 'react-icons/fa';
+import Home from './components/Home';
 import Categoria from './components/Categoria';
 import Fornecedor from './components/Fornecedor';
 import Produto from './components/Produto';
@@ -12,6 +13,7 @@ import Pedido from './components/Pedido';
 import './styles/Menu.css';
 
 const menuItems = [
+  { to: "/", label: "Home", icon: <FaHome /> },
   { to: "/categorias", label: "Categorias", icon: <FaList /> },
   { to: "/fornecedor", label: "Fornecedor", icon: <FaTruck /> },
   { to: "/produto", label: "Produto", icon: <FaBoxOpen /> },
@@ -20,6 +22,7 @@ const menuItems = [
   { to: "/saida-insumo", label: "Saída Insumo", icon: <FaArrowUp /> },
   { to: "/produto-insumo", label: "Produto Insumo", icon: <FaLink /> },
   { to: "/pedido", label: "Pedido", icon: <FaClipboardList /> },
+  //{ to: "https://app.powerbi.com/view?r=eyJrIjoiZTE4NmE1ZGEtYzExZS00MmY0LTliNzktYWQ5YTgzNzA2ZDViIiwidCI6ImNmNzJlMmJkLTdhMmItNDc4My1iZGViLTM5ZDU3YjA3Zjc2ZiIsImMiOjR9", label: "Dashboards", icon: <FaChartBar />, target: "_blank" },
 ];
 
 const Menu = () => {
@@ -31,6 +34,7 @@ const Menu = () => {
           key={item.to}
           to={item.to}
           className={`menu-link${location.pathname === item.to ? ' active' : ''}`}
+          target={item.target}
         >
           <span className="menu-icon">{item.icon}</span>
           <span>{item.label}</span>
@@ -53,7 +57,7 @@ const App = () => {
         <Route path="/saida-insumo" element={<SaidaInsumo />} />
         <Route path="/produto-insumo" element={<ProdutoInsumo />} />
         <Route path="/pedido" element={<Pedido />} />
-        <Route path="/" exact />
+        <Route path="/" element={<Home />} />
       </Routes>
     </BrowserRouter>
   );

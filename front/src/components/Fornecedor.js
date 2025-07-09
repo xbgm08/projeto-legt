@@ -178,7 +178,6 @@ const Fornecedor = () => {
           <table>
             <thead>
               <tr>
-                <th>ID</th>
                 <th>Nome</th>
                 <th>Contato</th>
                 <th>Porte</th>
@@ -191,7 +190,6 @@ const Fornecedor = () => {
             <tbody>
               {fornecedores.map(fornecedor => (
                 <tr key={fornecedor.id_fornecedor}>
-                  <td>{fornecedor.id_fornecedor}</td>
                   <td>{fornecedor.nome}</td>
                   <td>{fornecedor.contato}</td>
                   <td>{fornecedor.porte}</td>

@@ -155,6 +155,7 @@ const ProdutoInsumo = () => {
                   onChange={handleInputChange}
                   required
                   min="0"
+                  step="any"
                 />
               </label>
             </div>

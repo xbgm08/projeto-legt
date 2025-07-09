@@ -267,7 +267,6 @@ const Pedido = () => {
             <table>
               <thead>
                 <tr>
-                  <th>ID</th>
                   <th>Data/Hora</th>
                   <th>Valor Total</th>
                   <th>Forma de Pagamento</th>
@@ -278,7 +277,6 @@ const Pedido = () => {
               <tbody>
                 {pedidos.map(pedido => (
                   <tr key={pedido.id_pedido}>
-                    <td>{pedido.id_pedido}</td>
                     <td>{new Date(pedido.data_hora).toLocaleString()}</td>
                     <td>R$ {Number(pedido.valor_total).toFixed(2)}</td>
                     <td>{pedido.forma_pagamento}</td>
